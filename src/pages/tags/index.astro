@@ -1,0 +1,17 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getTags } from "../../utils/posts";
+const tags = [...(await getTags()).entries()].sort((a, b) => b[1] - a[1]);
+---
+<BaseLayout title="标签">
+  <h1>标签</h1>
+  <ul class="cloud">
+    {tags.map(([tag, count]) => (
+      <li><a href={`/tags/${tag}/`}>#{tag} <span>({count})</span></a></li>
+    ))}
+  </ul>
+</BaseLayout>
+<style>
+  .cloud { display: flex; flex-wrap: wrap; gap: 0.75rem; list-style: none; padding: 0; }
+  .cloud span { color: var(--muted); font-size: 0.85rem; }
+</style>

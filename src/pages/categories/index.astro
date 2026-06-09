@@ -1,0 +1,18 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCategories } from "../../utils/posts";
+const cats = [...(await getCategories()).entries()].sort((a, b) => b[1] - a[1]);
+---
+<BaseLayout title="分类">
+  <h1>分类</h1>
+  <ul class="list">
+    {cats.map(([cat, count]) => (
+      <li><a href={`/categories/${cat}/`}>{cat}</a> <span>({count})</span></li>
+    ))}
+  </ul>
+</BaseLayout>
+<style>
+  .list { list-style: none; padding: 0; }
+  .list li { padding: 0.4rem 0; }
+  .list span { color: var(--muted); font-size: 0.85rem; }
+</style>
