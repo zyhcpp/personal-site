@@ -1,7 +1,25 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import PostCard from "../components/PostCard.astro";
+import { getSortedPosts } from "../utils/posts";
+import { AUTHOR, SOCIAL_LINKS } from "../consts";
+const latest = (await getSortedPosts()).slice(0, 5);
 ---
 <BaseLayout>
-  <h1>首页占位</h1>
-  <p>稍后替换为简介 + 最新文章。</p>
+  <section class="intro">
+    <h1>你好，我是 {AUTHOR} 👋</h1>
+    <p>欢迎来到我的个人主页。这里记录我的技术笔记与思考。</p>
+    <p class="links">
+      {SOCIAL_LINKS.map((s) => <a href={s.href} target="_blank" rel="noopener">{s.label}</a>)}
+    </p>
+  </section>
+  <section>
+    <h2>最新文章</h2>
+    {latest.map((post) => <PostCard post={post} />)}
+    <p><a href="/blog/">查看全部文章 →</a></p>
+  </section>
 </BaseLayout>
+<style>
+  .intro { padding: 2rem 0; border-bottom: 1px solid var(--border); }
+  .intro .links { display: flex; gap: 1rem; }
+</style>
