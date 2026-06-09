@@ -2,6 +2,9 @@
 import { SITE_TITLE, NAV_ITEMS } from "../consts";
 import ThemeToggle from "./ThemeToggle.astro";
 const path = Astro.url.pathname;
+// 当前路径等于导航项，或是其子路径时高亮（如 /blog/xxx 时高亮“文章”），
+// 但不会把 /blogfoo 误判为 /blog。
+const isActive = (href: string) => path === href || path.startsWith(href + "/");
 ---
 <header class="site-header">
   <nav class="nav">
@@ -9,7 +12,7 @@ const path = Astro.url.pathname;
     <ul class="links">
       {NAV_ITEMS.map((item) => (
         <li>
-          <a href={item.href} aria-current={path.startsWith(item.href) ? "page" : undefined}>
+          <a href={item.href} aria-current={isActive(item.href) ? "page" : undefined}>
             {item.label}
           </a>
         </li>
