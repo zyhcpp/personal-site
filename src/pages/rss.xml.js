@@ -1,11 +1,10 @@
 import rss from "@astrojs/rss";
-import { getCollection } from "astro:content";
 import { SITE_TITLE, SITE_DESCRIPTION } from "../consts.ts";
+import { getSortedPosts } from "../utils/posts.ts";
 
 export async function GET(context) {
-  const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
-    (a, b) => b.data.date.getTime() - a.data.date.getTime(),
-  );
+  // 复用站点统一的文章查询（非草稿、按日期倒序），避免 feed 与站内排序/草稿规则漂移。
+  const posts = await getSortedPosts();
   return rss({
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
