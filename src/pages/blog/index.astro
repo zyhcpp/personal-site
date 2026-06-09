@@ -1,0 +1,22 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostCard from "../../components/PostCard.astro";
+import { getSortedPosts } from "../../utils/posts";
+
+const posts = await getSortedPosts();
+const pageSize = 10;
+const totalPages = Math.max(1, Math.ceil(posts.length / pageSize));
+const pagePosts = posts.slice(0, pageSize);
+---
+<BaseLayout title="文章">
+  <h1>文章</h1>
+  {pagePosts.map((post) => <PostCard post={post} />)}
+  {totalPages > 1 && (
+    <nav class="pager">
+      <a href="/blog/2/">下一页 →</a>
+    </nav>
+  )}
+</BaseLayout>
+<style>
+  .pager { display: flex; justify-content: space-between; margin-top: 2rem; }
+</style>

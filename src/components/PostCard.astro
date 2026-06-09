@@ -1,0 +1,26 @@
+---
+import type { Post } from "../utils/posts";
+interface Props { post: Post; }
+const { post } = Astro.props;
+const { title, date, description, category, tags } = post.data;
+const dateStr = date.toISOString().slice(0, 10);
+---
+<article class="card">
+  <h2><a href={`/blog/${post.id}/`}>{title}</a></h2>
+  <p class="meta">
+    <time datetime={dateStr}>{dateStr}</time>
+    <span>·</span>
+    <a href={`/categories/${category}/`}>{category}</a>
+  </p>
+  <p class="desc">{description}</p>
+  <ul class="tags">
+    {tags.map((t) => <li><a href={`/tags/${t}/`}>#{t}</a></li>)}
+  </ul>
+</article>
+<style>
+  .card { padding: 1.25rem 0; border-bottom: 1px solid var(--border); }
+  .card h2 { margin: 0 0 0.25rem; }
+  .meta { color: var(--muted); font-size: 0.9rem; display: flex; gap: 0.5rem; margin: 0 0 0.5rem; }
+  .desc { margin: 0 0 0.5rem; }
+  .tags { display: flex; gap: 0.75rem; list-style: none; padding: 0; margin: 0; font-size: 0.85rem; }
+</style>
