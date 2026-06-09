@@ -2,6 +2,9 @@ import { getCollection, type CollectionEntry } from "astro:content";
 
 export type Post = CollectionEntry<"blog">;
 
+// 每页文章数（列表分页用）。在此处统一定义，避免多页面各自硬编码导致分页错位。
+export const PAGE_SIZE = 10;
+
 // 取全部非草稿文章，按日期倒序
 export async function getSortedPosts(): Promise<Post[]> {
   const posts = await getCollection("blog", ({ data }) => !data.draft);

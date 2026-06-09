@@ -1,18 +1,18 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PostCard from "../../components/PostCard.astro";
-import { getSortedPosts } from "../../utils/posts";
+import { getSortedPosts, PAGE_SIZE } from "../../utils/posts";
 
 const posts = await getSortedPosts();
-const pageSize = 10;
-const totalPages = Math.max(1, Math.ceil(posts.length / pageSize));
-const pagePosts = posts.slice(0, pageSize);
+const totalPages = Math.max(1, Math.ceil(posts.length / PAGE_SIZE));
+const pagePosts = posts.slice(0, PAGE_SIZE);
 ---
 <BaseLayout title="文章">
   <h1>文章</h1>
+  {pagePosts.length === 0 && <p>暂无文章。</p>}
   {pagePosts.map((post) => <PostCard post={post} />)}
   {totalPages > 1 && (
-    <nav class="pager">
+    <nav class="pager" aria-label="分页">
       <a href="/blog/2/">下一页 →</a>
     </nav>
   )}

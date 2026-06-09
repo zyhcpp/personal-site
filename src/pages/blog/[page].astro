@@ -2,19 +2,18 @@
 import type { GetStaticPaths } from "astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PostCard from "../../components/PostCard.astro";
-import { getSortedPosts } from "../../utils/posts";
+import { getSortedPosts, PAGE_SIZE } from "../../utils/posts";
 
 export const getStaticPaths = (async () => {
   const posts = await getSortedPosts();
-  const pageSize = 10;
-  const totalPages = Math.max(1, Math.ceil(posts.length / pageSize));
+  const totalPages = Math.max(1, Math.ceil(posts.length / PAGE_SIZE));
   const paths = [];
   // 第 2 页起（第 1 页由 index.astro 处理）
   for (let p = 2; p <= totalPages; p++) {
     paths.push({
       params: { page: String(p) },
       props: {
-        pagePosts: posts.slice((p - 1) * pageSize, p * pageSize),
+        pagePosts: posts.slice((p - 1) * PAGE_SIZE, p * PAGE_SIZE),
         cur: p,
         totalPages,
       },
@@ -29,7 +28,7 @@ const prevHref = cur === 2 ? "/blog/" : `/blog/${cur - 1}/`;
 <BaseLayout title={`文章 - 第 ${cur} 页`}>
   <h1>文章</h1>
   {pagePosts.map((post) => <PostCard post={post} />)}
-  <nav class="pager">
+  <nav class="pager" aria-label="分页">
     <a href={prevHref}>← 上一页</a>
     {cur < totalPages && <a href={`/blog/${cur + 1}/`}>下一页 →</a>}
   </nav>
