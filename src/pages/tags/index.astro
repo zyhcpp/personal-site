@@ -7,7 +7,7 @@ const tags = [...(await getTags()).entries()].sort((a, b) => b[1] - a[1]);
   <h1>标签</h1>
   <ul class="cloud">
     {tags.map(([tag, count]) => (
-      <li><a href={`/tags/${tag}/`}>#{tag} <span>({count})</span></a></li>
+      <li><a href={`/tags/${tag}/`}>#{tag}</a> <span>({count})</span></li>
     ))}
   </ul>
 </BaseLayout>
