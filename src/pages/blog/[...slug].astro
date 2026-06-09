@@ -1,0 +1,24 @@
+---
+import type { GetStaticPaths } from "astro";
+import { render } from "astro:content";
+import PostLayout from "../../layouts/PostLayout.astro";
+import { getSortedPosts, getAdjacent } from "../../utils/posts";
+import { readingTime } from "../../utils/reading-time";
+
+export const getStaticPaths = (async () => {
+  const posts = await getSortedPosts();
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}) satisfies GetStaticPaths;
+
+const { post } = Astro.props;
+const { Content, headings } = await render(post);
+const minutes = readingTime(post.body ?? "");
+const all = await getSortedPosts();
+const { prev, next } = getAdjacent(all, post.id);
+---
+<PostLayout post={post} headings={headings} minutes={minutes} prev={prev} next={next}>
+  <Content />
+</PostLayout>

@@ -1,0 +1,48 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import TableOfContents from "../components/TableOfContents.astro";
+import type { MarkdownHeading } from "astro";
+import type { Post } from "../utils/posts";
+
+interface Props {
+  post: Post;
+  headings: MarkdownHeading[];
+  minutes: number;
+  prev: Post | null;
+  next: Post | null;
+}
+const { post, headings, minutes, prev, next } = Astro.props;
+const { title, date, description, category, tags } = post.data;
+const dateStr = date.toISOString().slice(0, 10);
+---
+<BaseLayout title={title} description={description}>
+  <article>
+    <h1>{title}</h1>
+    <p class="meta">
+      <time datetime={dateStr}>{dateStr}</time>
+      <span>·</span>
+      <a href={`/categories/${category}/`}>{category}</a>
+      <span>·</span>
+      <span>{minutes} 分钟阅读</span>
+    </p>
+    <ul class="tags">
+      {tags.map((t) => <li><a href={`/tags/${t}/`}>#{t}</a></li>)}
+    </ul>
+    <TableOfContents headings={headings} />
+    <div class="prose">
+      <slot />
+    </div>
+    <nav class="post-nav">
+      {prev && <a href={`/blog/${prev.id}/`}>← {prev.data.title}</a>}
+      {next && <a href={`/blog/${next.id}/`} class="next">{next.data.title} →</a>}
+    </nav>
+  </article>
+</BaseLayout>
+<style>
+  .meta { color: var(--muted); font-size: 0.9rem; display: flex; gap: 0.5rem; }
+  .tags { display: flex; gap: 0.75rem; list-style: none; padding: 0; font-size: 0.85rem; }
+  .prose :global(pre) { background: var(--code-bg); padding: 1rem; border-radius: 6px; overflow-x: auto; }
+  .prose :global(h2), .prose :global(h3) { scroll-margin-top: 1rem; }
+  .post-nav { display: flex; justify-content: space-between; gap: 1rem; margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 1rem; }
+  .post-nav .next { margin-left: auto; text-align: right; }
+</style>
