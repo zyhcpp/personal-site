@@ -1,5 +1,7 @@
 ---
 import BaseHead from "../components/BaseHead.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
 import { SITE_TITLE, SITE_DESCRIPTION } from "../consts";
 import "../styles/global.css";
 interface Props { title?: string; description?: string; image?: string; }
@@ -23,14 +25,10 @@ const {
     </script>
   </head>
   <body>
-    <header>
-      <nav><a href="/">{SITE_TITLE}</a></nav>
-    </header>
+    <Nav />
     <main>
       <slot />
     </main>
-    <footer style="text-align:center;padding:2rem;color:var(--muted)">
-      © {SITE_TITLE}
-    </footer>
+    <Footer />
   </body>
 </html>

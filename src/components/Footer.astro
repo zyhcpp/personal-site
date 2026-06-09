@@ -1,0 +1,17 @@
+---
+import { SITE_TITLE, SOCIAL_LINKS } from "../consts";
+---
+<footer class="site-footer">
+  <div class="social">
+    {SOCIAL_LINKS.map((s) => <a href={s.href} target="_blank" rel="noopener">{s.label}</a>)}
+  </div>
+  <p>© {SITE_TITLE}</p>
+  <p><a href="/rss.xml">RSS</a></p>
+</footer>
+<style>
+  .site-footer {
+    border-top: 1px solid var(--border); text-align: center;
+    padding: 2rem 1rem; color: var(--muted); margin-top: 3rem;
+  }
+  .social { display: flex; gap: 1rem; justify-content: center; margin-bottom: 0.5rem; }
+</style>

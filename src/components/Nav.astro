@@ -1,0 +1,38 @@
+---
+import { SITE_TITLE, NAV_ITEMS } from "../consts";
+import ThemeToggle from "./ThemeToggle.astro";
+const path = Astro.url.pathname;
+---
+<header class="site-header">
+  <nav class="nav">
+    <a class="brand" href="/">{SITE_TITLE}</a>
+    <ul class="links">
+      {NAV_ITEMS.map((item) => (
+        <li>
+          <a href={item.href} aria-current={path.startsWith(item.href) ? "page" : undefined}>
+            {item.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+    <div class="actions">
+      <a href="/search" class="search-link" aria-label="搜索">🔍</a>
+      <ThemeToggle />
+    </div>
+  </nav>
+</header>
+<style>
+  .site-header { border-bottom: 1px solid var(--border); }
+  .nav {
+    max-width: var(--max-width); margin: 0 auto; padding: 0.75rem 1rem;
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .brand { font-weight: 700; color: var(--fg); }
+  .links { display: flex; gap: 1rem; list-style: none; margin: 0; padding: 0; flex: 1; }
+  .links a[aria-current="page"] { color: var(--accent); font-weight: 600; }
+  .actions { display: flex; align-items: center; gap: 0.5rem; }
+  @media (max-width: 600px) {
+    .nav { flex-wrap: wrap; }
+    .links { order: 3; flex-basis: 100%; }
+  }
+</style>
