@@ -1,14 +1,37 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { AUTHOR } from "../consts";
+import { AUTHOR } from "../consts";   // 如果你在 consts 里定义了 AUTHOR，可以改用 {AUTHOR}
+// 如果 consts 里没有定义，下面的代码里直接写了“今今”
 ---
-<BaseLayout title="关于">
+
+<BaseLayout title="关于我">
   <h1>关于我</h1>
-  <p>我是 {AUTHOR}。这里是关于我的详细介绍——经历、技能与兴趣。</p>
-  <h2>技能</h2>
-  <ul>
-    <li>（在这里填写你的技能）</li>
-  </ul>
-  <h2>经历</h2>
-  <p>（在这里填写你的经历）</p>
+  
+  <p><strong>可以叫我今今。</strong></p>
+  
+  <p>
+    是一个兴趣广泛但三分钟热度的人<br />
+    计算机界无关紧要的人<br />
+    国家二级广场舞运动员<br />
+    半个玄学宗教爱好者<br />
+    喜欢港台音乐和摇滚<br />
+    梦想是给乐队打架子鼓<br />
+    赛博八字：ENFJ + 天秤 + 丙火<br />
+    希望大家都幸福
+  </p>
+  
+  <p>
+    请让我随心行事，自由做梦<br />
+    任凭明天对我裁决
+  </p>
+  
+  <p>
+    常怀爱，喜悦与慈悲<br />
+    相信自己永远值得做过的梦。
+  </p>
+  
+  <h2>联系方式</h2>
+  <p>
+    邮箱：<a href="mailto:2103616693@qq.com">2103616693@qq.com</a>
+  </p>
 </BaseLayout>
