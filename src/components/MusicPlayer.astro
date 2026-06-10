@@ -1,37 +1,64 @@
 ---
-// 音频文件路径：把你的 mp3 放到 public/music/bgm.mp3
 const SRC = "/music/bgm.mp3";
 ---
 <div class="music-player">
-  <audio id="bgm" src={SRC} loop preload="none"></audio>
-  <button id="bgm-toggle" aria-label="播放/暂停背景音乐" title="背景音乐" aria-pressed="false">🎵</button>
+  <audio id="bgm" src={SRC} loop preload="auto"></audio>
+  <button id="bgm-toggle" aria-label="播放/暂停背景音乐" title="背景音乐">🎵</button>
 </div>
 <script>
   const audio = document.getElementById("bgm") as HTMLAudioElement | null;
-  const btn = document.getElementById("bgm-toggle");
-  if (audio && btn) {
-    // 跨页面尽量连贯：若上一页在播放，本页恢复播放
-    if (sessionStorage.getItem("bgm-playing") === "1") {
+  const btn  = document.getElementById("bgm-toggle");
+  if (!audio || !btn) throw new Error("MusicPlayer: missing elements");
+
+  const KEY_PLAYING = "bgm-playing";
+  const KEY_TIME    = "bgm-time";
+
+  // 恢复播放
+  function tryResume() {
+    const was = sessionStorage.getItem(KEY_PLAYING);
+    // 恢复进度，没有则从头
+    const t = parseFloat(sessionStorage.getItem(KEY_TIME) ?? "");
+    if (!isNaN(t) && t > 0) audio.currentTime = t;
+
+    if (was === "1") {
       audio.play().then(() => {
-        btn.textContent = "⏸";
-        btn.setAttribute("aria-pressed", "true");
-      }).catch(() => {});
+        setUI(true);
+      }).catch(() => {
+        // 浏览器限制自动播放，保持按钮为暂停态，等用户手动点
+        setUI(false);
+        sessionStorage.setItem(KEY_PLAYING, "0");
+      });
     }
-    btn.addEventListener("click", () => {
-      if (audio.paused) {
-        audio.play().then(() => {
-          btn.textContent = "⏸";
-          btn.setAttribute("aria-pressed", "true");
-          sessionStorage.setItem("bgm-playing", "1");
-        }).catch(() => {});
-      } else {
-        audio.pause();
-        btn.textContent = "🎵";
-        btn.setAttribute("aria-pressed", "false");
-        sessionStorage.setItem("bgm-playing", "0");
-      }
-    });
   }
+
+  function setUI(playing: boolean) {
+    btn!.textContent = playing ? "⏸" : "🎵";
+    btn!.setAttribute("aria-pressed", String(playing));
+  }
+
+  // 离开页面时保存进度
+  window.addEventListener("beforeunload", () => {
+    if (!audio.paused) {
+      sessionStorage.setItem(KEY_TIME, String(audio.currentTime));
+    }
+  });
+
+  // audio 能开始播放时（有足够数据）再尝试恢复
+  audio.addEventListener("canplay", tryResume, { once: true });
+
+  btn.addEventListener("click", () => {
+    if (audio.paused) {
+      audio.play().then(() => {
+        setUI(true);
+        sessionStorage.setItem(KEY_PLAYING, "1");
+      }).catch(() => {});
+    } else {
+      audio.pause();
+      setUI(false);
+      sessionStorage.setItem(KEY_PLAYING, "0");
+      sessionStorage.setItem(KEY_TIME, String(audio.currentTime));
+    }
+  });
 </script>
 <style>
   .music-player { position: fixed; right: 1rem; bottom: 1rem; z-index: 50; }
