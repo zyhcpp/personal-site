@@ -4,7 +4,7 @@ const SRC = "/music/bgm.mp3";
 ---
 <div class="music-player">
   <audio id="bgm" src={SRC} loop preload="none"></audio>
-  <button id="bgm-toggle" aria-label="播放/暂停背景音乐" title="背景音乐">🎵</button>
+  <button id="bgm-toggle" aria-label="播放/暂停背景音乐" title="背景音乐" aria-pressed="false">🎵</button>
 </div>
 <script>
   const audio = document.getElementById("bgm") as HTMLAudioElement | null;
@@ -12,17 +12,22 @@ const SRC = "/music/bgm.mp3";
   if (audio && btn) {
     // 跨页面尽量连贯：若上一页在播放，本页恢复播放
     if (sessionStorage.getItem("bgm-playing") === "1") {
-      audio.play().then(() => { btn.textContent = "⏸"; }).catch(() => {});
+      audio.play().then(() => {
+        btn.textContent = "⏸";
+        btn.setAttribute("aria-pressed", "true");
+      }).catch(() => {});
     }
     btn.addEventListener("click", () => {
       if (audio.paused) {
         audio.play().then(() => {
           btn.textContent = "⏸";
+          btn.setAttribute("aria-pressed", "true");
           sessionStorage.setItem("bgm-playing", "1");
         }).catch(() => {});
       } else {
         audio.pause();
         btn.textContent = "🎵";
+        btn.setAttribute("aria-pressed", "false");
         sessionStorage.setItem("bgm-playing", "0");
       }
     });
