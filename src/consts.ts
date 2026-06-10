@@ -12,5 +12,6 @@ export const NAV_ITEMS: { label: string; href: string }[] = [
   { label: "文章", href: "/blog" },
   { label: "标签", href: "/tags" },
   { label: "分类", href: "/categories" },
+  { label: "照片", href: "/photos" },
   { label: "关于", href: "/about" },
 ];

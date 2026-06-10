@@ -1,0 +1,111 @@
+<div id="lightbox" class="lb-overlay" role="dialog" aria-modal="true" aria-label="照片查看器" hidden>
+  <button id="lb-close" class="lb-close" aria-label="关闭" title="关闭">&times;</button>
+  <button id="lb-prev"  class="lb-arrow lb-prev" aria-label="上一张" title="上一张">&#8249;</button>
+  <button id="lb-next"  class="lb-arrow lb-next" aria-label="下一张" title="下一张">&#8250;</button>
+  <div class="lb-body">
+    <img id="lb-img" src="" alt="" />
+    <div id="lb-caption" class="lb-caption"></div>
+  </div>
+</div>
+
+<script>
+  interface PhotoItem { src: string; title: string; description: string }
+
+  const lb    = document.getElementById("lightbox")!;
+  const img   = document.getElementById("lb-img") as HTMLImageElement;
+  const cap   = document.getElementById("lb-caption")!;
+  const prev  = document.getElementById("lb-prev")!;
+  const next  = document.getElementById("lb-next")!;
+  const close = document.getElementById("lb-close")!;
+
+  let photos: PhotoItem[] = [];
+  let idx = 0;
+
+  function show(i: number) {
+    idx = i;
+    const p = photos[idx];
+    img.src = p.src;
+    img.alt = p.title;
+    cap.innerHTML = `<p class="lb-title">${p.title}</p>${p.description ? `<p class="lb-desc">${p.description}</p>` : ""}`;
+    lb.hidden = false;
+    prev.style.visibility = idx > 0 ? "visible" : "hidden";
+    next.style.visibility = idx < photos.length - 1 ? "visible" : "hidden";
+    close.focus();
+  }
+
+  function hide() {
+    lb.hidden = true;
+    img.src = "";
+  }
+
+  // ---- 事件 ----
+  close.addEventListener("click", hide);
+  lb.addEventListener("click", (e) => { if (e.target === lb) hide(); });
+
+  prev.addEventListener("click", () => { if (idx > 0) show(idx - 1); });
+  next.addEventListener("click", () => { if (idx < photos.length - 1) show(idx + 1); });
+
+  document.addEventListener("keydown", (e) => {
+    if (lb.hidden) return;
+    if (e.key === "Escape") hide();
+    if (e.key === "ArrowLeft")  { e.preventDefault(); prev.dispatchEvent(new Event("click")); }
+    if (e.key === "ArrowRight") { e.preventDefault(); next.dispatchEvent(new Event("click")); }
+  });
+
+  // 触屏滑动
+  let touchX = 0;
+  lb.addEventListener("touchstart", (e) => { touchX = (e.touches[0]?.clientX ?? touchX); }, { passive: true });
+  lb.addEventListener("touchend", (e) => {
+    const dx = (e.changedTouches[0]?.clientX ?? touchX) - touchX;
+    if (Math.abs(dx) > 60) {
+      dx > 0 ? prev.dispatchEvent(new Event("click")) : next.dispatchEvent(new Event("click"));
+    }
+  });
+
+  // 暴露给外部
+  (window as any).__openLightbox = function (items: PhotoItem[], startIndex: number) {
+    photos = items;
+    show(startIndex);
+  };
+</script>
+
+<style>
+  .lb-overlay {
+    display: flex;
+    position: fixed; inset: 0; z-index: 999;
+    background: rgba(0,0,0,0.92);
+    align-items: center; justify-content: center;
+  }
+  .lb-overlay[hidden] { display: none; }
+  .lb-body {
+    display: flex; flex-direction: column; align-items: center;
+    max-width: 90vw; max-height: 90vh;
+  }
+  .lb-body img {
+    max-width: 90vw; max-height: 75vh;
+    object-fit: contain; border-radius: 4px;
+  }
+  .lb-caption {
+    color: #ccc; text-align: center; margin-top: 0.75rem;
+  }
+  .lb-title { font-size: 1.1rem; font-weight: 600; margin: 0; color: #fff; }
+  .lb-desc  { font-size: 0.9rem; margin: 0.25rem 0 0; color: #aaa; }
+  .lb-close {
+    position: absolute; top: 1rem; right: 1.5rem;
+    background: none; border: none; color: #fff;
+    font-size: 2.2rem; cursor: pointer; line-height: 1; z-index: 1001;
+  }
+  .lb-arrow {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    background: rgba(255,255,255,0.12); border: none; color: #fff;
+    font-size: 2.5rem; width: 48px; height: 80px; cursor: pointer;
+    border-radius: 4px; z-index: 1001;
+  }
+  .lb-arrow:hover { background: rgba(255,255,255,0.25); }
+  .lb-prev  { left:  0.5rem; }
+  .lb-next  { right: 0.5rem; }
+  @media (max-width: 600px) {
+    .lb-arrow { width: 36px; font-size: 2rem; }
+    .lb-body img { max-height: 65vh; }
+  }
+</style>

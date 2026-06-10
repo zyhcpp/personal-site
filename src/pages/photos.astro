@@ -1,0 +1,12 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PhotoGrid from "../components/PhotoGrid.astro";
+import { getPhotos } from "../data/photos";
+
+const photos = getPhotos();
+---
+
+<BaseLayout title="照片">
+  <h1>照片</h1>
+  <PhotoGrid photos={photos} />
+</BaseLayout>

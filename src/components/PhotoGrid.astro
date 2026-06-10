@@ -1,0 +1,90 @@
+---
+import { Image } from "astro:assets";
+import Lightbox from "./Lightbox.astro";
+import type { Photo } from "../data/photos";
+
+interface Props { photos: Photo[] }
+const { photos } = Astro.props;
+---
+
+<Lightbox />
+
+{photos.length === 0 ? (
+  <p style="text-align:center;color:var(--muted);padding:3rem 0">
+    还没有照片。把图片放到 <code>src/assets/photos/</code> 即可自动展示。
+  </p>
+) : (
+  <div class="grid" id="photo-grid">
+    {photos.map((photo, i) => (
+      <button
+        class="card"
+        data-index={i}
+        data-title={photo.title}
+        data-description={photo.description}
+        aria-label={`查看大图：${photo.title}`}
+      >
+        <Image
+          src={photo.src}
+          alt={photo.title}
+          width={400}
+          height={300}
+          fit="cover"
+          loading={i < 8 ? "eager" : "lazy"}
+          decoding="async"
+        />
+        <span class="label">{photo.title}</span>
+      </button>
+    ))}
+  </div>
+)}
+
+<script>
+  document.getElementById("photo-grid")?.addEventListener("click", (e) => {
+    const card = (e.target as HTMLElement).closest<HTMLButtonElement>(".card");
+    if (!card) return;
+
+    // 从所有卡片收集数据
+    const cards = document.querySelectorAll<HTMLButtonElement>(".card");
+    const items: { src: string; title: string; description: string }[] = [];
+    cards.forEach((c) => {
+      const img = c.querySelector<HTMLImageElement>("img");
+      if (img) {
+        items.push({
+          src: img.src.replace(/w=\d+/, "w=1200"),  // 请求大尺寸
+          title: c.dataset.title ?? "",
+          description: c.dataset.description ?? "",
+        });
+      }
+    });
+    const idx = parseInt(card.dataset.index ?? "0");
+    (window as any).__openLightbox?.(items, idx);
+  });
+</script>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+  .card {
+    display: block; cursor: pointer;
+    border: none; border-radius: 6px; overflow: hidden;
+    background: var(--code-bg);
+    padding: 0; position: relative; aspect-ratio: 4/3;
+    transition: transform 0.15s;
+  }
+  .card:hover { transform: scale(1.02); }
+  .card img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  .label {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 0.5rem 0.75rem;
+    background: linear-gradient(transparent, rgba(0,0,0,0.65));
+    color: #fff; font-size: 0.9rem; font-weight: 500;
+    text-align: left;
+    opacity: 0; transition: opacity 0.2s;
+  }
+  .card:hover .label, .card:focus-visible .label { opacity: 1; }
+</style>
