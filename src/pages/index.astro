@@ -1,14 +1,24 @@
 ---
+import { Image } from "astro:assets";
+import avatar from "../assets/avatar.jpg";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PostCard from "../components/PostCard.astro";
 import { getSortedPosts } from "../utils/posts";
-import { AUTHOR, SOCIAL_LINKS } from "../consts";
+import { SOCIAL_LINKS } from "../consts";
 const latest = (await getSortedPosts()).slice(0, 5);
 ---
 <BaseLayout>
   <section class="intro">
-    <h1>你好，我是 {AUTHOR} 👋</h1>
-    <p>欢迎来到我的个人主页。这里记录我的技术笔记与思考。</p>
+    <Image
+      src={avatar}
+      alt="头像"
+      width={120}
+      height={120}
+      fit="cover"
+      class="avatar"
+    />
+    <h1>今今的个人博客 👋</h1>
+    <p>人生是幻乐一场，祝大家玩得尽兴</p>
     <p class="links">
       {SOCIAL_LINKS.map((s) => <a href={s.href} target="_blank" rel="noopener">{s.label}</a>)}
     </p>
@@ -20,6 +30,11 @@ const latest = (await getSortedPosts()).slice(0, 5);
   </section>
 </BaseLayout>
 <style>
-  .intro { padding: 2rem 0; border-bottom: 1px solid var(--border); }
-  .intro .links { display: flex; gap: 1rem; }
+  .intro { padding: 2rem 0; border-bottom: 1px solid var(--border); text-align: center; }
+  .intro .links { display: flex; gap: 1rem; justify-content: center; }
+  .avatar {
+    width: 120px; height: 120px; border-radius: 50%;
+    object-fit: cover; object-position: center;
+    display: block; margin: 0 auto 1rem;
+  }
 </style>
