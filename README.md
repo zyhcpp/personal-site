@@ -1,43 +1,43 @@
-# Astro Starter Kit: Minimal
+# 个人主页
 
-```sh
-npm create astro@latest -- --template minimal
+基于 Astro 的静态个人博客综合站。含代码高亮、目录导航、暗色模式、站内搜索、RSS、背景音乐播放器，部署到 Vercel。
+
+## 本地开发
+
+```bash
+npm install
+npm run dev      # http://localhost:4321
+npm run build    # 生产构建 + 搜索索引
+npm run preview  # 预览构建产物
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## 写文章
 
-## 🚀 Project Structure
+在 `src/content/blog/` 新建 `.md` 文件，frontmatter 需包含：
 
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+```yaml
+---
+title: "文章标题"
+date: 2026-06-10
+description: "文章摘要"
+category: "分类"
+tags: ["标签1", "标签2"]
+---
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+构建时 schema 会自动校验，漏写字段会直接报错。
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+## 部署
 
-Any static assets, like images, can be placed in the `public/` directory.
+1. 推送到 GitHub 仓库
+2. 在 Vercel 导入仓库，框架自动识别为 Astro
+3. 部署前把 `src/consts.ts` 的 `SITE_URL` 改为真实域名
 
-## 🧞 Commands
+## 技术栈
 
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+- **框架**：Astro v6
+- **内容**：Content Collections + Zod schema 校验
+- **代码高亮**：Shiki（Astro 内置）
+- **搜索**：Pagefind（构建期生成索引）
+- **RSS / Sitemap**：@astrojs/rss / @astrojs/sitemap
+- **部署**：Vercel（免费、自动 HTTPS、全球 CDN）

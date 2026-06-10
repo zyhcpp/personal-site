@@ -1,0 +1,31 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+<BaseLayout title="搜索">
+  <h1>搜索</h1>
+  <div id="search"></div>
+</BaseLayout>
+<link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
+<!--
+  Pagefind UI 由构建后的 pagefind 生成在 /pagefind/ 下。
+  用 is:inline + 运行时插入 <script> 标签加载，避免 Vite 在构建期
+  尝试解析这个尚不存在的 URL（dev 模式下 /pagefind/ 可能 404，属正常）。
+-->
+<script is:inline>
+  window.addEventListener("DOMContentLoaded", () => {
+    const el = document.getElementById("search");
+    const s = document.createElement("script");
+    s.src = "/pagefind/pagefind-ui.js";
+    s.onload = () => {
+      try {
+        new window.PagefindUI({ element: "#search", showSubResults: true });
+      } catch (e) {
+        if (el) el.innerHTML = "<p>搜索初始化失败。</p>";
+      }
+    };
+    s.onerror = () => {
+      if (el) el.innerHTML = "<p>搜索索引在生产构建后可用。</p>";
+    };
+    document.head.appendChild(s);
+  });
+</script>
